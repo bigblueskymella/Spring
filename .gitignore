@@ -20,4 +20,4 @@ Thumbs.db
 
 # Gradle 관련
 .gradle/
-build/
+# build/
