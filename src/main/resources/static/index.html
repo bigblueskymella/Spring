@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>심플 메모장</title>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="container mt-5">
+    <h2>📝 나의 1호 메모장</h2>
+    
+    <div class="input-group mb-3">
+        <input type="text" id="memoInput" class="form-control" placeholder="메모를 입력하세요">
+        <button class="btn btn-primary" onclick="saveMemo()">저장</button>
+    </div>
+
+    <ul id="memoList" class="list-group"></ul>
+
+    <script>
+        // 화면이 켜지자마자 메모를 불러옴
+        window.onload = function() {
+            loadMemos();
+        };
+
+        // 1. 메모 저장 (POST 호출)
+        function saveMemo() {
+            const content = document.getElementById('memoInput').value;
+            fetch('/memos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(content)
+            }).then(() => {
+                document.getElementById('memoInput').value = '';
+                loadMemos(); // 다시 불러오기
+            });
+        }
+
+        // 2. 메모 목록 가져오기 (GET 호출)
+        function loadMemos() {
+            fetch('/memos')
+                .then(res => res.json())
+                .then(data => {
+                    const list = document.getElementById('memoList');
+                    list.innerHTML = '';
+                    data.forEach(memo => {
+                        list.innerHTML += `<li class="list-group-item d-flex justify-content-between">
+                            ${memo.content}
+                            <button class="btn btn-danger btn-sm" onclick="deleteMemo(${memo.id})">삭제</button>
+                        </li>`;
+                    });
+                });
+        }
+
+        // 3. 메모 삭제 (DELETE 호출)
+        function deleteMemo(id) {
+            fetch(`/memos/${id}`, { method: 'DELETE' })
+                .then(() => loadMemos());
+        }
+    </script>
+</body>
+</html>
+
+<!-- 🟢1️⃣사용자의 클릭 (HTML/JS)
+사용자가 '저장' 버튼을 누르면, 브라우저의 **JavaScript(fetch)**가 메모 내용을 들고 우리 서버 주소(/memos)로 달려갑니다.
+
+2️⃣서버의 처리 (Spring Boot)
+Controller가 택배를 받고, 내용을 확인한 뒤 Repository에게 "이것 좀 금고에 넣어줘"라고 부탁합니다.
+
+3️⃣데이터의 안착 (H2 Database)
+Repository가 DB에 INSERT 쿼리를 날려 데이터를 저장하고, 다시 "성공했어!"라고 컨트롤러에게 알려줍니다.
+컨트롤러는 브라우저에게 "저장 완료!"라고 응답하고, 브라우저는 목록을 새로고침해서 보여줍니다. -->

@@ -1,0 +1,23 @@
+# 컴파일 결과물
+/build/
+/out/
+/bin/
+
+# IDE 설정 파일 (나중에 학생들과 충돌 방지)
+.idea/
+.vscode/
+*.iml
+.classpath
+.project
+.settings/
+
+# OS 파일
+.DS_Store
+Thumbs.db
+
+# 로그 파일
+*.log
+
+# Gradle 관련
+.gradle/
+build/
